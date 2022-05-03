@@ -2,19 +2,17 @@ import std/parseopt
 import std/logging
 import std/os
 import system
+import std/strutils
 import std/times
 
-import command/mysql/db/create as commandMysqlDbCreate
-import command/mysql/user/add as commandMysqlUserAdd
-import command/mysql/user/allow as commandMysqlUserAllow
-
-import command/user/add as commandUserAdd
-import command/user/remove as commandUserRemove
+import macros
 
 import helper/binary
 import helper/echo
 
 import commandant
+
+include "include/commands.nim"
 
 const serverUtilsVersion = "0.0.1"
 const serverUtilsName = "server-utils"
@@ -34,31 +32,25 @@ addHandler(consoleLog)
 addHandler(fileLog)
 
 proc helpMessage(): string =
-  result = """
-  pico-nim project template builder
-  Usage: example2 <subcommand> <subcommand options> <sillyArg>
-  Available subcommands: 
-    {...}
-  """
+    var help: seq[string] = @[]
+    include "include/commandhelp.nim"
+
+    result = os.getAppFilename() & """ <subcommand> <subcommand options>
+
+Available subcommands:
+
+""" & help.join("\n")
 
 commandline:
-  argument(sillyArg, float) 
-  exitoption("help", "h", helpMessage())
-  exitoption("version", "v", serverUtilsVersion)
-  errormsg("you have made some kind of mistake")
-  subcommand init, "init", "i":
-    argument(name, string)
-    flag(override, "override", "O")
-    option(sdk, string, "sdk", "s")
-    option(nimbase, string, "nimbase", "h")
-    exitoption("help", "h", "I wish i could help you, but I can't")
-  commandMysqlDbCreate.addCommand()
-  commandMysqlUserAdd.addCommand()
-  commandMysqlUserAllow.addCommand()
-  
-  commandUserAdd.addCommand()
-  commandUserRemove.addCommand()
-  
+    exitoption("help", "h", helpMessage())
+    exitoption("version", "v", serverUtilsVersion)
+    include "include/commandlines.nim"
+
+#dumpAstGen:
+#    var help: seq[string] = @[]
+#    help.add("test")
+#    help.add("test2")
+#    echo help.join(" ")
 #dumpTree:
 #  if init:
 #    echo fmt"creating a new project directory, {name}. One second..."
@@ -68,12 +60,7 @@ commandline:
 #    echo "please use either the 'init' or 'build' subcommand..."
 #    echo helpMessage()
 
-commandMysqlDbCreate.addProcess()
-commandMysqlUserAdd.addProcess()
-commandMysqlUserAllow.addProcess()
-
-commandUserAdd.addProcess()
-commandUserRemove.addProcess()
+include "include/commandprocess.nim"
 
 try:
     echoInfo(getBinary("php"))

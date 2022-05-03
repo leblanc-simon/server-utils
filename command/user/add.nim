@@ -35,6 +35,9 @@ proc definition(): Command =
         ]
     )
 
+macro addHelp*(): untyped =
+    result = createHelp(definition())
+
 macro addCommand*(): untyped =
     result = createCommand(definition())
 

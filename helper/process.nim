@@ -8,13 +8,13 @@ type ProcessBuilder* = ref object of RootObj
     binary*: string
     arguments*: seq[string]
 
-method getBinaryPath*(this: ProcessBuilder): string =
+method getBinaryPath*(this: ProcessBuilder): string {.base.} =
     return binary.getBinary(this.binary)
 
-method logCommand*(this: ProcessBuilder): void =
+method logCommand*(this: ProcessBuilder): void {.base.} =
     info(this.getBinaryPath() & " " & this.arguments.join(" "))
 
-method execute*(this: ProcessBuilder): bool =
+method execute*(this: ProcessBuilder): bool {.base.} =
     this.logCommand()
 
     let process: Process = startProcess(this.getBinaryPath(), "", this.arguments, nil, {poStdErrToStdOut})

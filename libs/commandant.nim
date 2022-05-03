@@ -1,3 +1,5 @@
+# @see: https://github.com/fenekku/commandeer
+
 import algorithm
 import parseopt
 import sequtils

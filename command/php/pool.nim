@@ -1,7 +1,7 @@
 import std/logging
 
 import ../command
-import ../../helper/process
+#import ../../helper/process
 
 proc definition(): Command =
     return Command(
@@ -26,11 +26,14 @@ proc definition(): Command =
                 shortName: "p",
                 ident: "port",
                 optionType: "int",
-                defaultValue: 0,
+                defaultValue: "0",
                 description: "Port à utiliser pour le pool PHP"
             )
         ]
     )
+
+macro addHelp*(): untyped =
+    result = createHelp(definition())
 
 macro addCommand*(): untyped =
     result = createCommand(definition())
@@ -38,17 +41,5 @@ macro addCommand*(): untyped =
 macro addProcess*(): untyped =
     result = createProcess(definition())
 
-proc user_add*(username: string, shell: string, home: string): void =
-    var processBuilder: ProcessBuilder
-    processBuilder = ProcessBuilder(binary: "adduser", arguments: @[
-        "--home", home,
-        "--shell", shell,
-        "--disabled-password",
-        "--gecos", "",
-        username
-    ])
-
-    if processBuilder.execute():
-        info("User " & username & " created")
-    else:
-        error("Fail to create user " & username)
+proc php_pool*(username: string, version: string, port: int): void =
+    error("Fail to create user " & username)

@@ -37,7 +37,7 @@ proc generateHelp(command: Command): string =
 
     if command.arguments.len != 0:
         for argument in command.arguments:
-            help.add(" " & argument.ident)
+            help.add(" <" & argument.ident & ">")
 
     if command.options.len != 0:
         for option in command.options:
@@ -65,6 +65,16 @@ proc generateHelp(command: Command): string =
         
     return help
 
+proc createHelp*(command: Command): NimNode =
+    return nnkStmtList.newTree(
+        nnkCall.newTree(
+            nnkDotExpr.newTree(
+                newIdentNode("help"),
+                newIdentNode("add")
+            ),
+            newLit("  " & alignLeft(command.name, 30) & command.description)
+        )
+    )
 
 proc createCommand*(command: Command): NimNode =
     let commandTree = nnkStmtList.newTree()
@@ -99,7 +109,10 @@ proc createCommand*(command: Command): NimNode =
         optionTree.add newIdentNode(option.optionType)
         optionTree.add newLit(option.longName)
         optionTree.add newLit(option.shortName)
-        optionTree.add newLit(option.defaultValue)
+        if option.optionType == "int":
+            optionTree.add newLit(strutils.parseInt(option.defaultValue))
+        else:
+            optionTree.add newLit(option.defaultValue)
 
         optionsCommandTree.add optionTree
     
