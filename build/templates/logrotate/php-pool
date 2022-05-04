@@ -1,0 +1,11 @@
+{home}/logs/php-fpm*.log
+{
+        rotate 14
+        daily
+        missingok
+        notifempty
+        compress
+        delaycompress
+        dateext
+        maxage 30
+}

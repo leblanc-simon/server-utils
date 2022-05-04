@@ -8,6 +8,7 @@ import std/times
 import macros
 
 import helper/binary
+import helper/configuration
 import helper/echo
 
 import commandant
@@ -65,6 +66,12 @@ include "include/commandprocess.nim"
 try:
     echoInfo(getBinary("php"))
     echoInfo(getPhpBin("7.4"))
+
+    let configuration: Configuration = Configuration()
+    if false == configuration.parse("template.ini"):
+        echoError("Fail to parse file")
+
+    echoInfo(configuration.mysql.schemas.join("/"))
 except IOError:
     let
         e = getCurrentException()

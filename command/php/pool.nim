@@ -1,7 +1,11 @@
 import std/logging
+import std/json
+from strutils import intToStr
 
 import ../command
 #import ../../helper/process
+import ../../helper/echo
+import ../../helper/template_builder
 
 proc definition(): Command =
     return Command(
@@ -42,4 +46,11 @@ macro addProcess*(): untyped =
     result = createProcess(definition())
 
 proc php_pool*(username: string, version: string, port: int): void =
-    error("Fail to create user " & username)
+    var templateBuilder: TemplateBuilder
+    templateBuilder = TemplateBuilder(templatePath: "php/pool.conf", parameters: %* {
+        "username": username,
+        "version": version,
+        "port": intToStr(port)
+    })
+
+    echoInfo(templateBuilder.render())

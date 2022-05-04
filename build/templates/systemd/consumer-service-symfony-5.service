@@ -1,0 +1,29 @@
+[Unit]
+Description=[{hostname}-{consumer}] AMQP Consumer
+Requires=rabbitmq-server.target
+BindsTo=rabbitmq-server.target
+After=rabbitmq-server.target
+
+[Service]
+Type=simple
+
+User={username}
+Group={username}
+
+WorkingDirectory={home}/www
+
+Environment="APP_ENV=prod"
+
+ExecStart={php_binary} bin/console messenger:consume {consumer} --env=prod --no-debug -vvv --time-limit=3600 --memory-limit=128M --limit=50
+
+Restart=always
+RestartSec=3s
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=amqp-{consumer}-{hostname}
+
+Nice=19
+
+[Install]
+WantedBy=multi-user.target

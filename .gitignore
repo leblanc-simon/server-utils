@@ -1,4 +1,5 @@
-/build/config
+/build/config/*
+!/build/config/template.ini
 /build/logs
 /build/server-utils
 /config
