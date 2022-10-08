@@ -72,7 +72,7 @@ proc createHelp*(command: Command): NimNode =
                 newIdentNode("help"),
                 newIdentNode("add")
             ),
-            newLit("  " & alignLeft(command.name, 30) & command.description)
+            newLit("  " & alignLeft("\e[32m" & command.name & "\e[0m", 40) & command.description)
         )
     )
 

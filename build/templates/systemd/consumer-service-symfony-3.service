@@ -1,8 +1,7 @@
 [Unit]
 Description=[{hostname}-{consumer}] AMQP Consumer
-Requires=rabbitmq-server.target
-BindsTo=rabbitmq-server.target
-After=rabbitmq-server.target
+Requires=rabbitmq-server.service
+After=rabbitmq-server.service
 
 [Service]
 Type=simple
@@ -14,7 +13,7 @@ WorkingDirectory={home}/www
 
 Environment="APP_ENV=prod"
 
-ExecStart={php_binary} bin/console rabbitmq:consumer {consumer} --env=prod --no-debug -vvv --time-limit=3600 --memory-limit=128M -m 5
+ExecStart={php_binary} bin/console rabbitmq:consumer {consumer} --env=prod --no-debug -vvv --memory-limit=128M -m 5
 
 Restart=always
 RestartSec=3s
@@ -26,4 +25,4 @@ SyslogIdentifier=amqp-{consumer}-{hostname}
 Nice=19
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target rabbitmq-server.service

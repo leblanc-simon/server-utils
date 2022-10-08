@@ -67,11 +67,12 @@ try:
     echoInfo(getBinary("php"))
     echoInfo(getPhpBin("7.4"))
 
-    let configuration: Configuration = Configuration()
+    var configuration: Configuration = Configuration()
     if false == configuration.parse("template.ini"):
         echoError("Fail to parse file")
 
     echoInfo(configuration.mysql.schemas.join("/"))
+    echoInfo(configuration.mysql.password)
 except IOError:
     let
         e = getCurrentException()

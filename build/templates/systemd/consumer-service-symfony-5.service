@@ -1,8 +1,7 @@
 [Unit]
 Description=[{hostname}-{consumer}] AMQP Consumer
-Requires=rabbitmq-server.target
-BindsTo=rabbitmq-server.target
-After=rabbitmq-server.target
+Requires=rabbitmq-server.service
+After=rabbitmq-server.service
 
 [Service]
 Type=simple
@@ -26,4 +25,4 @@ SyslogIdentifier=amqp-{consumer}-{hostname}
 Nice=19
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target rabbitmq-server.service

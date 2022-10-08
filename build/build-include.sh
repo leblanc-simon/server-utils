@@ -7,7 +7,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-command_files=$(find . -type f -name '*.nim')
+command_files=$(find . -type f -name '*.nim' | sort)
 
 commands="# Commands import\n"
 commandlines="# Command defined\n"
@@ -40,7 +40,7 @@ for command_file in ${command_files}; do
         commands="${commands}\n"
         commandlines="${commandlines}\n"
         commandprocess="${commandprocess}\n"
-        commandhelp="${commandhelp}\n"
+        commandhelp="${commandhelp}\nhelp.add(\"  \e[33m${currentDir}\e[0m\")\n"
     fi
     lastDir="${currentDir}"
 

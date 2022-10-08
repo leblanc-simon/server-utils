@@ -16,7 +16,7 @@ proc definition(): Command =
             CommandArg(
                 ident: "username",
                 argType: "string",
-                description: "Nom de l'utilisateur à créer"
+                description: "Nom de l'utilisateur dans lequel le pool s'exécutera"
             ),
             CommandArg(
                 ident: "version",
@@ -32,6 +32,22 @@ proc definition(): Command =
                 optionType: "int",
                 defaultValue: "0",
                 description: "Port à utiliser pour le pool PHP"
+            ),
+            CommandOpt(
+                longName: "home",
+                shortName: "h",
+                ident: "home",
+                optionType: "string",
+                defaultValue: "",
+                description: "Répertoire utilisateur"
+            ),
+            CommandOpt(
+                longName: "hostname",
+                shortName: "w",
+                ident: "hostname",
+                optionType: "string",
+                defaultValue: "",
+                description: "Nom de domaine"
             )
         ]
     )
@@ -45,12 +61,14 @@ macro addCommand*(): untyped =
 macro addProcess*(): untyped =
     result = createProcess(definition())
 
-proc php_pool*(username: string, version: string, port: int): void =
+proc php_pool*(username: string, version: string, port: int, home: string, hostname: string): void =
     var templateBuilder: TemplateBuilder
     templateBuilder = TemplateBuilder(templatePath: "php/pool.conf", parameters: %* {
         "username": username,
         "version": version,
-        "port": intToStr(port)
+        "port": intToStr(port),
+        "home": home,
+        "hostname": hostname
     })
 
     echoInfo(templateBuilder.render())

@@ -1,7 +1,9 @@
 import std/logging
+import std/json
 
 import ../../command
-import ../../../helper/process
+import ../../../helper/echo
+import ../../../helper/template_builder
 
 proc definition(): Command =
     return Command(
@@ -10,11 +12,6 @@ proc definition(): Command =
         description: "Ajout d'un consumer Symfony",
         arguments: @[
             CommandArg(
-                ident: "username",
-                argType: "string",
-                description: "Nom de l'utilisateur à utiliser"
-            ),
-            CommandArg(
                 ident: "consumer_name",
                 argType: "string",
                 description: "Nom de consumer à créer"
@@ -22,20 +19,44 @@ proc definition(): Command =
         ],
         options: @[
             CommandOpt(
-                longName: "shell",
-                shortName: "s",
-                ident: "shell",
+                longName: "username",
+                shortName: "u",
+                ident: "username",
                 optionType: "string",
-                defaultValue: "/bin/bash",
-                description: "Shell de l'utilisateur"
+                defaultValue: "",
+                description: "Nom de l'utilisateur dans lequel s'exécutera le service"
+            ),
+            CommandOpt(
+                longName: "php_binary",
+                shortName: "p",
+                ident: "php_binary",
+                optionType: "string",
+                defaultValue: "",
+                description: "Binaire PHP à utiliser"
             ),
             CommandOpt(
                 longName: "home", 
-                shortName: "", 
+                shortName: "h", 
                 ident: "home", 
                 optionType: "string", 
                 defaultValue: "", 
                 description: "Dossier utilisateur"
+            ),
+            CommandOpt(
+                longName: "hostname",
+                shortName: "w",
+                ident: "hostname",
+                optionType: "string",
+                defaultValue: "",
+                description: "Nom de domaine"
+            ),
+            CommandOpt(
+                longName: "symfony",
+                shortName: "s",
+                ident: "symfony",
+                optionType: "int",
+                defaultValue: "5",
+                description: "Version de Symfony pour le consumer"
             )
         ]
     )
@@ -49,17 +70,20 @@ macro addCommand*(): untyped =
 macro addProcess*(): untyped =
     result = createProcess(definition())
 
-proc systemd_symfony_consumer*(username: string, consumer_name: string, shell: string, home: string): void =
-    var processBuilder: ProcessBuilder
-    processBuilder = ProcessBuilder(binary: "adduser", arguments: @[
-        "--home", home,
-        "--shell", shell,
-        "--disabled-password",
-        "--gecos", "",
-        username
-    ])
-
-    if processBuilder.execute():
-        info("User " & username & " created")
+proc systemd_symfony_consumer*(consumer_name: string, username: string, php_binary: string, home: string, hostname: string, symfony: int): void =
+    var templateBuilder: TemplateBuilder
+    var templateConsumer: string
+    if symfony > 3:
+        templateConsumer = "systemd/consumer-service-symfony-5.service"
     else:
-        error("Fail to create user " & username)
+        templateConsumer = "systemd/consumer-service-symfony-3.service"
+
+    templateBuilder = TemplateBuilder(templatePath: templateConsumer, parameters: %* {
+        "consumer_name": consumer_name,
+        "username": username,
+        "php_binary": php_binary,
+        "home": home,
+        "hostname": hostname
+    })
+
+    echoInfo(templateBuilder.render())

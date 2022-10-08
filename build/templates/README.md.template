@@ -1,0 +1,29 @@
+# Utilitaire de gestion de serveur
+
+## Commandes disponibles
+
+__commands__
+
+## Initialisation d'un projet global
+
+* Créer un fichier de projet dans `config/` en le nommant `[nom du projet].ini`
+* lancer la commande `./server-utils project:init [nom du projet]`
+
+## Mise à jour d'un projet
+
+* Modifier le fichier de projet dans `config/[nom du projet].ini`
+* lancer la commande `./server-utils project:update [nom du projet]`
+
+## Fonctionnement
+
+### Logrotate
+
+### MySQL
+
+### PHP
+
+### PostgreSQL
+
+### SystemD
+
+### Utilisateur
